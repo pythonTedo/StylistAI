@@ -7,3 +7,4 @@ ml
 large_files
 large_files/*
 large_files/fashion-dataset/*
+large_files/fashion-dataset/fashion-dataset.zip
