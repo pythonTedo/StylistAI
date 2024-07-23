@@ -11,6 +11,10 @@ body,html{
 *::after {
   box-sizing: border-box;
 }
+.small-chat-image {
+    max-width: 150px;
+    max-height: 150px;
+}
 #description-text{
 	color: #f4f4f4;
 }

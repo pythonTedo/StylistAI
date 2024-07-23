@@ -66,7 +66,7 @@
                                             {{ message.text }}
                                             {% if message.image_base64 %}
                                                 <br>
-                                                <img src="data:image/png;base64,{{ message.image_base64 }}" alt="Image" class="chat-image">
+                                                <img src="data:image/jpeg;base64,{{ message.image_base64 }}" alt="Image" class="chat-image small-chat-image">
                                             {% endif %}
                                             <span class="msg_time">{{ message.timestamp.strftime('%H:%M') }}</span>
                                         </div>
@@ -77,7 +77,7 @@
                                             {{ message.text }}
                                             {% if message.image_base64 %}
                                                 <br>
-                                                <img src="data:image/jpeg;base64,{{ message.image_base64 }}" alt="Image" class="chat-image">
+                                                <img src="data:image/jpeg;base64,{{ message.image_base64 }}" alt="Image" class="chat-image small-chat-image">
                                             {% endif %}
                                             <span class="msg_time_send">{{ message.timestamp.strftime('%H:%M') }}</span>
                                         </div>
@@ -178,8 +178,24 @@
                     $(".typing-indicator").remove();
 
                     if (data.success) {
+                        // Append the bot message text
                         var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="../static/Logo/bot.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer" data-provide="markdown">' + marked(data.bot_message.text) + '<span class="msg_time">' + data.bot_message.timestamp + '</span></div></div>';
                         $("#messageFormeight").append($.parseHTML(botHtml));
+                        
+                        // Conditionally append the original image if present
+                        if (data.bot_message.image_base64) {
+                            var originalImageHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="../static/Logo/bot.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer"><img src="data:image/jpeg;base64,' + data.bot_message.image_base64 + '" alt="Original Image" class="chat-image" style="max-width: 150px; max-height: 150px;"><span class="msg_time">' + data.bot_message.timestamp + '</span></div></div>';
+                            $("#messageFormeight").append($.parseHTML(originalImageHtml));
+                        }
+                        
+                        // Conditionally append the recommended images if present
+                        if (data.bot_message.recommended_images && data.bot_message.recommended_images.length > 0) {
+                            data.bot_message.recommended_images.forEach(function(rec) {
+                                var recommendedImageHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="../static/Logo/bot.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer"><img src="data:image/jpeg;base64,' + rec.image + '" alt="Recommended Image" class="chat-image" style="max-width: 150px; max-height: 150px;"><span class="msg_time">' + data.bot_message.timestamp + '</span></div></div>';
+                                $("#messageFormeight").append($.parseHTML(recommendedImageHtml));
+                            });
+                        }
+                        
                         scrollToBottom();
                     } else {
                         console.error("Error from server:", data.error);
@@ -188,7 +204,7 @@
                     console.error("AJAX error:", textStatus, errorThrown);
                 });
             });
-
+            
             $("#uploadButton").on("click", function() {
                 $("#imageUpload").click();
             });
