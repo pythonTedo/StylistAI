@@ -10,3 +10,4 @@ large_files/fashion-dataset/*
 large_files/fashion-dataset/fashion-dataset.zip
 !large_files/ml/feature_extractor_model.keras
 !large_files/ml/all_features.npy
+!large_files/ml/all_features_pca.npy
