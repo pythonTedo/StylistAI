@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import pickle
 import io
 from sqlalchemy.dialects.mysql import LONGTEXT
+from pathlib import Path
 
 # Load environment variables from .env file
 load_dotenv()
@@ -162,8 +163,7 @@ def compute_recommendations(image):
     def load_and_preprocess_image(image_path, target_size):
         try:
             img = Image.open(image_path)
-            original_width, original_height = img.size
-            aspect_ratio = original_width / original_height
+            aspect_ratio = img.width / img.height
 
             if aspect_ratio > 1:
                 new_width = target_size[0]
@@ -190,57 +190,46 @@ def compute_recommendations(image):
         img_array = preprocess_input(img_array)
 
         features = model.predict(img_array)
-        features_pca = pca.transform(features)
-        return features_pca
+        return pca.transform(features)
 
-    def find_similar_images_for_unseen(image_path, feat_extractor, pca, all_features_pca, train_files, top_n=5):
+    def find_similar_images(image_path, feat_extractor, pca, all_features_pca, train_files, top_n=5):
         image_features_pca = get_image_features(image_path, feat_extractor, pca)
         if image_features_pca is None:
-            print("Error processing the input image.")
             return None
 
         # Calculate similarities
         cosine_similarities = cosine_similarity(image_features_pca, all_features_pca)[0]
-        euclidean_similarities = -euclidean_distances(image_features_pca, all_features_pca)[0]
 
         # Get top N similar images
-        top_indices_cosine = np.argsort(cosine_similarities)[::-1][:top_n]
-        top_indices_euclidean = np.argsort(euclidean_similarities)[::-1][:top_n]
+        top_indices = np.argsort(cosine_similarities)[::-1][:top_n]
 
-        # Ensure paths are correctly constructed
-        base_image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'fashion-dataset', 'fashion-dataset', 'images')
-        top_similarities_cosine = [(os.path.join(base_image_path, os.path.basename(train_files[idx])), float(cosine_similarities[idx])) for idx in top_indices_cosine]
-        top_similarities_euclidean = [(os.path.join(base_image_path, os.path.basename(train_files[idx])), float(euclidean_similarities[idx])) for idx in top_indices_euclidean]
+        base_image_path = os.path.join(Path(__file__).resolve().parent.parent, 'large_files', 'fashion-dataset', 'fashion-dataset', 'images')
 
-        return top_similarities_cosine, top_similarities_euclidean
+        return [(os.path.join(base_image_path, os.path.basename(train_files[idx])), float(cosine_similarities[idx])) for idx in top_indices]
 
     # Save the image temporarily and get the file path
     temp_dir = os.path.join(os.path.dirname(__file__), "temp")
-    if not os.path.exists(temp_dir):
-        os.makedirs(temp_dir)
+    os.makedirs(temp_dir, exist_ok=True)
     temp_image_path = os.path.join(temp_dir, "temp_image.jpg")
     image.save(temp_image_path)
 
-    top_similarities_cosine, top_similarities_euclidean = find_similar_images_for_unseen(
-        temp_image_path, FEATURE_EXTRACTOR_MODEL, PCA_MODEL, ALL_FEATURES_PCA, TRAIN_FILES, top_n=5
-    )
+    top_similar_images = find_similar_images(temp_image_path, FEATURE_EXTRACTOR_MODEL, PCA_MODEL, ALL_FEATURES_PCA, TRAIN_FILES, top_n=5)
 
     # Convert input and recommended images to base64
     original_image = Image.open(temp_image_path)
     original_image_base64 = image_to_base64(original_image)
 
     recommended_images_base64 = []
-    for img_path, score in top_similarities_cosine:
-        normalized_img_path = os.path.normpath(img_path)
-        if os.path.exists(normalized_img_path):
+    for img_path, score in top_similar_images:
+        if os.path.exists(img_path):
             try:
-                img = Image.open(normalized_img_path)
+                img = Image.open(img_path)
                 img_base64 = image_to_base64(img)
                 recommended_images_base64.append({"image": img_base64, "score": score})
             except Exception as e:
-                print(f"Error opening image {normalized_img_path}: {e}")
+                print(f"Error opening image {img_path}: {e}")
         else:
-            print(f"Image does not exist: {normalized_img_path}")
+            print(f"Image does not exist: {img_path}")
 
     return original_image_base64, recommended_images_base64
 
