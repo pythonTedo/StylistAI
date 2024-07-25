@@ -26,6 +26,10 @@ This project is a backend application built using Flask, designed to provide a c
 2. **Install dependencies**:
    Make sure you have Python 3.10. Install the necessary packages:
    ```bash
+   python3.10 -m venv ./venv
+
+   source venv/bin/activate
+
    pip install -r requirements.txt
    ```
 
@@ -40,7 +44,7 @@ This project is a backend application built using Flask, designed to provide a c
     ```
 
 4. **Environment Variables**:
-   Create a `.env` file in the app directory and add the following environment variables:
+   Create a `.env` file in the `app` directory and add the following environment variables:
    ```
    SECRET_KEY=your_secret_key
    SQLALCHEMY_DATABASE_URI=mysql+pymysql://username:password@localhost/database
@@ -50,19 +54,29 @@ This project is a backend application built using Flask, designed to provide a c
    ```
 
 5. **Database Setup**:
-   Ensure that MySQL is running and the database specified in `SQLALCHEMY_DATABASE_URI` is created. Initialize the database:
+   Ensure that MySQL is running and the database specified in `SQLALCHEMY_DATABASE_URI` is created. Initialize the database.Setup the db to be with root user and password 123456Test!:
    ```bash
-   flask db upgrade
+   mysql -u root -p;
+
+   SOURCE createDB.sql;
+   or
+   mysql -u root -p < createDB.sql
+
    ```
 
 6. **Run the Application**:
+    Navigate to `app` folder and execute the app.py
    ```bash
+   cd app
+
    python app.py
    ```
 
 7. **IMPORTANT for Recommendation System**:
 
     #### The recommendation system uses images which are stored locally! So if you want to test the recommendation system it will give error of not finding the images. The folder itself is > 20GB large.
+
+    Folder structure from StylistAI folder is ../fashion-dataset/images/ ... where all the images are stored.
 
 ### Key Features
 

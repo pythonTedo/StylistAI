@@ -59,26 +59,10 @@ To interact with the backend API using Postman, follow the detailed instructions
   - `image`: (Optional) Upload an image file to receive recommendations
   - `generate`: Set to `1` to generate clothing recommendations based on the `msg`
 
-**Response**:
-- **Success**: Returns a JSON object with the bot's message or image recommendations.
-  - **JSON Response Example**:
-    ```json
-    {
-      "success": true,
-      "bot_message": {
-        "text": "Here are your recommendations",
-        "timestamp": "12:00",
-        "image_base64": "base64_encoded_image_data",
-        "recommended_images": [
-          {
-            "image": "base64_encoded_image_data",
-            "score": 0.95
-          },
-        ]
-      }
-    }
-    ```
-- **Failure**: Returns an error message if the user is not authenticated or if an invalid input is provided.
+**Use Cases**:
+- Chabot functionality: Use only `msg` to send the text and get chatbot seponse
+- Outfit generation: Use `msg` and `generate` set to 1 in order to get a link response with the outfit
+- Item recommendation: Upload Use `msg` and `image` image file from peace of cloths to get recommended images. 
 
 ### Notes
 

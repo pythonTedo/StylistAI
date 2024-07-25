@@ -203,9 +203,23 @@ def compute_recommendations(image):
         # Get top N similar images
         top_indices = np.argsort(cosine_similarities)[::-1][:top_n]
 
-        base_image_path = os.path.join(Path(__file__).resolve().parent.parent.parent, 'fashion-dataset', 'images')
+        base_image_path = Path(__file__).resolve().parent.parent.parent / 'fashion-dataset'
 
-        return [(os.path.join(base_image_path, os.path.basename(train_files[idx])), float(cosine_similarities[idx])) for idx in top_indices]
+        similar_images = []
+        for idx in top_indices:
+            # Ensure the path uses the correct format
+            image_file = Path(train_files[idx]).name
+            full_image_path = base_image_path / image_file
+
+            # Convert path to string using the correct separator for the OS
+            full_image_path = str(full_image_path).replace("\\", "/")
+
+            if Path(full_image_path).exists():
+                similar_images.append((full_image_path, float(cosine_similarities[idx])))
+            else:
+                print(f"Image does not exist: {full_image_path}")
+
+        return similar_images
 
     # Save the image temporarily and get the file path
     temp_dir = os.path.join(os.path.dirname(__file__), "temp")
