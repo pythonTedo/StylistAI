@@ -26,7 +26,7 @@ app = Flask(__name__)
 
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456Test@localhost/chatbot'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456Test!@localhost/chatbot'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
