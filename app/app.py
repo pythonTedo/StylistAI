@@ -38,11 +38,11 @@ client = OpenAI(api_key=openai_api_key)
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
 API_CLOATHING_URL = 'https://thenewblack.ai/api/1.1/wf/clothing'
-FEATURE_EXTRACTOR_MODEL = tf.keras.models.load_model('..\\large_files\\ml\\feature_extractor_model.keras')
-ALL_FEATURES_PCA = np.load('..\\large_files\\ml\\all_features_pca.npy')
-with open('..\\large_files\\ml\\pca_model.pkl', 'rb') as f:
+FEATURE_EXTRACTOR_MODEL = tf.keras.models.load_model('../large_files/ml/feature_extractor_model.h5')
+ALL_FEATURES_PCA = np.load('../large_files/ml/all_features_pca.npy')
+with open('../large_files/ml/pca_model.pkl', 'rb') as f:
     PCA_MODEL = pickle.load(f)
-with open('..\\large_files\\ml\\train_files.pkl', 'rb') as f:
+with open('../large_files/ml/train_files.pkl', 'rb') as f:
     TRAIN_FILES = pickle.load(f)
 
 # User Model

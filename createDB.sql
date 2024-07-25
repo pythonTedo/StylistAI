@@ -8,11 +8,12 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE chat_history (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    message TEXT,
-    image_base64 LONGBLOB,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+CREATE TABLE `message` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `text` LONGTEXT DEFAULT NULL,
+  `image_base64` LONGTEXT DEFAULT NULL,
+  `is_bot` tinyint(1) DEFAULT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
 );
