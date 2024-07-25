@@ -203,7 +203,7 @@ def compute_recommendations(image):
         # Get top N similar images
         top_indices = np.argsort(cosine_similarities)[::-1][:top_n]
 
-        base_image_path = os.path.join(Path(__file__).resolve().parent.parent, 'large_files', 'fashion-dataset', 'fashion-dataset', 'images')
+        base_image_path = os.path.join(Path(__file__).resolve().parent.parent.parent, 'fashion-dataset', 'images')
 
         return [(os.path.join(base_image_path, os.path.basename(train_files[idx])), float(cosine_similarities[idx])) for idx in top_indices]
 
